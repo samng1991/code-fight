@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * Given a string s, find the longest palindromic substring in s. You may assume that the maximum length of s is 1000.
  * <p>
@@ -18,51 +20,59 @@ public class LongestPalindrome {
             return s;
         }
 
-        char[] c = s.toCharArray();
+        char[] c1 = s.toCharArray();
 
-//        String reverse = "";
         String longestPalindrome = "";
-        for (int i = 0; i < s.length() - 1; i++) {
-            for (int j = i + 1; j < s.length(); j++) {
-                boolean valid = true;
-                String palindrome = s.substring(i, j);
-                for (int k = i; k <= j / 2; k++) {
-                    if (c[k] != c[j - k]) {
-                        valid = false;
-                        break;
-                    }
-                }
+        StringBuilder palindromeStringBuilder;
+        int middleLeft, middleRight, length = c1.length, longestLength = 0, tempIndex;
+        for (int i = 0; i < length; i++) {
+            palindromeStringBuilder = new StringBuilder();
+            middleLeft = i;
+            middleRight = i;
+            tempIndex = i + 1;
 
-                if (valid && palindrome.length() > longestPalindrome.length()) {
-                    longestPalindrome = palindrome;
+            // find all next char same as current char, set middleRight index, skip i to middleRight index + 1
+            palindromeStringBuilder.append(c1[middleLeft]);
+            while (tempIndex < length) {
+                if (c1[middleLeft] == c1[tempIndex]) {
+                    middleRight = tempIndex;
+                    palindromeStringBuilder.append(c1[tempIndex]);
+                    tempIndex++;
+                    i++;
+                } else {
+                    break;
                 }
+            }
 
-//                reverse = "";
-//                String testString = s.substring(i, j + 1);
-//                int length = testString.length();
-//
-//                if ((length & 1) == 0) {
-//                    for (int k = length - 1; k >= length / 2; k--)
-//                        reverse = reverse + testString.charAt(k);
-//
-//                    if (testString.substring(0, length / 2).equals(reverse) && length > longestPalindrome.length()) {
-//                        longestPalindrome = testString;
-//                    }
-//                } else {
-//                    for (int k = length - 1; k >= length / 2 + 1; k--)
-//                        reverse = reverse + testString.charAt(k);
-//
-//                    if (testString.substring(0, length / 2).equals(reverse) && length > longestPalindrome.length()) {
-//                        longestPalindrome = testString;
-//                    }
-//                }
+            // find the min compare times, it should be min of current char to left or right bounding
+            int compareTimes = Math.min(middleLeft, length - middleRight - 1);
+
+            // start from middle char, compare left and right hand side char until reach min compare time
+            // if same, prepend and append to palindromeStringBuilder
+            // if not same break the loop
+            for (int j = 1; j <= compareTimes; j++) {
+                if (c1[middleLeft - j] == c1[middleRight + j]) {
+                    palindromeStringBuilder.insert(0, c1[middleLeft - j]);
+                    palindromeStringBuilder.append(c1[middleRight + j]);
+                } else {
+                    break;
+                }
+            }
+
+            if (palindromeStringBuilder.length() > longestLength) {
+                longestPalindrome = palindromeStringBuilder.toString();
+                longestLength = palindromeStringBuilder.length();
             }
         }
         return longestPalindrome;
     }
 
     public static void main(String args[]) throws Exception {
-        System.out.println(longestPalindrome("yyhhoabcbaop"));
+        long start = System.nanoTime();
+        System.out.println(longestPalindrome("civilwartestingwhetherthatnaptionoranynartionsoconceivedandsodedicatedcanlongendureWeareqmetonagreatbattlefiemldoftzhatwarWehavecometodedicpateaportionofthatfieldasafinalrestingplaceforthosewhoheregavetheirlivesthatthatnationmightliveItisaltogetherfangandproperthatweshoulddothisButinalargersensewecannotdedicatewecannotconsecratewecannothallowthisgroundThebravelmenlivinganddeadwhostruggledherehaveconsecrateditfaraboveourpoorponwertoaddordetractTgheworldadswfilllittlenotlenorlongrememberwhatwesayherebutitcanneverforgetwhattheydidhereItisforusthelivingrathertobededicatedheretotheulnfinishedworkwhichtheywhofoughtherehavethusfarsonoblyadvancedItisratherforustobeherededicatedtothegreattdafskremainingbeforeusthatfromthesehonoreddeadwetakeincreaseddevotiontothatcauseforwhichtheygavethelastpfullmeasureofdevotionthatweherehighlyresolvethatthesedeadshallnothavediedinvainthatthisnationunsderGodshallhaveanewbirthoffreedomandthatgovernmentofthepeoplebythepeopleforthepeopleshallnotperishfromtheearth"));
+        System.out.println(longestPalindrome("ccc7"));
+        System.out.println(longestPalindrome("99ab8ba77"));
+        System.out.println(System.nanoTime() - start);
     }
 
 }
